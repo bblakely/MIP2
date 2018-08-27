@@ -1,4 +1,4 @@
-source('Puff_fcomp_ED.R')
+source('Pull_fcomp_ED.R')
 library(abind)
 
 georef.name<-load('PalEON_siteInfo_all.RData')
