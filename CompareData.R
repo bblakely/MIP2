@@ -1,3 +1,9 @@
+source('Pull_data_JULES.R')
+source('Pull_data_ED.R')
+
+#run seasonal profile for jules then ed
+
+
 #a.eg<-read.csv('EGtoDC_Data/EGtoDC_Albedo_Historic.csv')
 #a.dc<-read.csv('EGtoDC_Data/EGtoDC_Albedo_Modern.csv')
 a.chg<-read.csv('EGtoDC_Data/EGtoDC_Albedo_Change.csv')
@@ -39,6 +45,10 @@ for(i in 1:nrow(a.chg)){#ncol(a.chg)
   lines(colMeans(a.chg[2:13], na.rm=TRUE), lwd=2)
 }
 abline(h=0)
+
+dev.copy(png, filename='Figures/Albcompare.png', width=500, height=400); dev.off()
+
+
 #rm(list=setdiff(ls(), c("databin.jules","databin.ed","datasubset.jules",
 #"datasubset.ed","var.want","varset")))
 
@@ -104,6 +114,9 @@ for(i in 1:nrow(st.chg)){#ncol(st.chg)
 }
 abline(h=0)
 
+dev.copy(png, filename='Figures/STcompare.png', width=500, height=400); dev.off()
+
+
 #AGU metrics
 
 datstmeans<-colMeans(st.chg[2:13], na.rm=TRUE)
@@ -115,3 +128,27 @@ edstmeans/datstmeans
 
 datstmeans-jstmeans
 jstmeans/datstmeans
+
+#Transpiration
+
+ed.transp<--databin.ed[,,8]
+par(mfrow=c(1,3))
+plot(rowMeans(ed.transp, na.rm=TRUE), type='l',ylim=c(-1e-5, 2e-5), main='ED', lwd=2, ylab="Transp", xlab="Month")
+for(i in 1:ncol(ed.transp)){
+  lines(ed.transp[,i], lwd=0.5, col='gray')
+  lines(rowMeans(ed.transp), lwd=2)
+}
+
+
+transp.dat<-read.csv("TranspChg_Sap.csv")[2:13]
+transp.ind<-read.csv("EGtoDC_ind.csv")[,2]
+
+dat.transp<-transp.dat[transp.ind,]
+
+plot(colMeans(dat.transp, na.rm=TRUE), type='l',ylim=c(-1e-5, 2e-5), main='DATA', lwd=2, ylab="Transp", xlab="Month")
+for(i in (1:nrow(dat.transp))){
+  lines(as.numeric(dat.transp[i,]), col='gray', lwd=0.5)
+  lines(colMeans(dat.transp), lwd=2)
+}
+
+dev.copy(png, filename='Figures/Transpcompare.png', width=500, height=400); dev.off()
