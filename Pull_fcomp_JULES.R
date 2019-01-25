@@ -47,18 +47,20 @@ monthsTS<-rep(1:12, 1100)
 
 #Aggregate to annual
 #Option 1 - full year
-dc.agg<-aggregate(dc.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)] 
-eg.agg<-aggregate(eg.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)]
-nt.agg<-aggregate(nt.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)]
+#dc.agg<-aggregate(dc.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)] 
+#eg.agg<-aggregate(eg.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)]
+#nt.agg<-aggregate(nt.comp.match, by=list(DummyTS), FUN=mean)[,2:(npix+1)]
 
-# #Option 2 - growing season
-# YearTS.gs<-rep(900:1999, each=5)
-# dc.gs<-dc.comp.match[monthsTS>4 & monthsTS<10,]
-# eg.gs<-eg.comp.match[monthsTS>4 & monthsTS<10,]
-# 
-# dc.agg<-aggregate(dc.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)] 
-# eg.agg<-aggregate(eg.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
-# 
+#Option 2 - growing season
+YearTS.gs<-rep(900:1999, each=5)
+dc.gs<-dc.comp.match[monthsTS>4 & monthsTS<10,]
+eg.gs<-eg.comp.match[monthsTS>4 & monthsTS<10,]
+nt.gs<-nt.comp.match[monthsTS>4 & monthsTS<10,]
+
+dc.agg<-aggregate(dc.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
+eg.agg<-aggregate(eg.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
+nt.agg<-aggregate(nt.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
+
 
 ann.ts<-c(900:1999)
 regimeshift<-rep(0,npix)
@@ -71,7 +73,7 @@ for(c in 1:npix){
   rg<-range(dc.agg[,c])
   if(rg[1]< ndom & rg[2] > dom){  #rg[1]< 0.5 & rg[2]>0.5 &Must (1) cross the 0.5 point, i.e. change dominance and (2) cross it far enough to be ecologically dominant
     regimeshift[c]<-1
-    plot(dc.agg[,c]~ann.ts, type='l', col='green', ylim=c(0,1), main=c, sep=', ')#paste(goodlat[c],goodlon[c], sep=', ')
+    plot(dc.agg[,c]~ann.ts, type='l', col='green', ylim=c(0,1), main=c)#paste(goodlat[c],goodlon[c], sep=', ')
     lines(eg.agg[,c]~ann.ts,col='purple')
     lines(nt.agg[,c]~ann.ts, col='orange')
   }
