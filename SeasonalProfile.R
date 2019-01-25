@@ -1,12 +1,12 @@
 
-model<-"jules"
+model<-"ed"
   "ed"
   "jules"
 #library("abind")
 
 if(model=="ed"){DAT<-datasubset.ed}
 if(model=="jules"){DAT<-datasubset.jules}
-var.want[14]<-"none"  #makes ed and jules same length
+#var.want[14]<-"none"  #makes ed and jules same length
 
 #counters
 skipcount<-0 #For shifts that don't meet criteria
@@ -16,7 +16,7 @@ colnum<-0 #used with storage
 #storage
 laicheck<-matrix(data=NA,nrow=3, ncol=100)  #Holds min LAI 
 coords.rec<-matrix(data=NA,nrow=100, ncol=2)
-databin<-array(data=-9999, dim=c(12,100,length(var.want))) #Holds all seasonal profiles
+databin<-array(data=-9999, dim=c(12,100,length(var.want)+2)) #Holds all seasonal profiles; +2 is for added-on dc/eg shift percentages
 
 
 #storage for longwave
@@ -66,9 +66,11 @@ eg.profs<-aggregate(dat.ex[eg.fin,], by=list(dat.ex$month[eg.fin]), FUN=mean)
 colnum<-colnum+1
 #var.care<-var.want[c(1:2,4:8)]
 
-to.plot<-which(colnames(dc.profs) %in% var.want)
 
-for(p in to.plot){ #Start at 2 beacuse column one is grouping; end 4 before end b/c these are timestamps and proportions dc or eg
+to.plot<-c(which(colnames(dc.profs) %in% var.want), #variable cols
+          which(colnames(dc.profs)=="egcomp"), which(colnames(dc.profs)=='dccomp')) #plus the EG and DC dominance cols; these will always be cbound on right after the varcols
+
+for(p in to.plot){ 
   
   plot(dc.profs[,p], type='l', col='green', lwd=2, 
        ylim=c(min(min(dc.profs[,p]),min(eg.profs[,p])), max(max(dc.profs[,p]), max(eg.profs[,p]))),
@@ -92,7 +94,7 @@ for(p in to.plot){ #Start at 2 beacuse column one is grouping; end 4 before end 
   }
   
   #special: If lwdown or lwnet, store
-
+  if("LWnet"%in%var.want & 'lwdown'%in%var.want){
   if (p==(which(var.want=="LWnet")+1)){
     LWnet.dc[,colnum]<-dc.profs[,p]
     LWnet.eg[,colnum]<-eg.profs[,p]
@@ -102,7 +104,7 @@ for(p in to.plot){ #Start at 2 beacuse column one is grouping; end 4 before end 
     lwdown.dc[,colnum]<-dc.profs[,p]
     lwdown.eg[,colnum]<-eg.profs[,p]
   }
-     
+  }#closes if lwdown/lwnet exists statement
   
 }  #Closes p-loop
 goodcount<-goodcount+1
@@ -124,7 +126,7 @@ databin<-databin[,closed>=1,]#Clips out low-LAI cells
 #Plot diffs
 par(mfrow=c(1,2))
 for(d in 1:dim(databin)[3]){
-  plot(rowMeans(databin[,,d]), type='l', main=var.want[d])
+  plot(-rowMeans(databin[,,d]), type='l', main=var.want[d])
   abline(h=0)
 }
 
@@ -142,11 +144,13 @@ rm("lwdown.dc","lwdown.eg","LWnet.dc","LWnet.eg")
 
 #clean up lai and coords
 laicheck.good<-laicheck[,which(!is.na(laicheck[1,]))]
+
+if(model=='ed'){ #Temporary patch; this works for ED but not JULES for some reason. Won't affect final #s, mostly for mapping.
 coords.rec.trim<-coords.rec[which(!is.na(coords.rec[,1])),]
 
 lai.symb.all<-data.frame(cbind(coords.rec.trim,laicheck.good[3,]))
 lai.symb<-data.frame(lai.symb.all[closed>=1,])
-
+}
 
 rm("laicheck","coords.rec")
 
