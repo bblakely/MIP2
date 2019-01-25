@@ -55,7 +55,17 @@ for(i in 1:nrow(a.chg)){#ncol(a.chg)
 abline(h=0)
 box(lwd=4)
 
-dev.copy(png, filename='Figures/Albcompare.png', width=550, height=300); dev.off()
+#Albedo RF
+par(mfrow=c(1,2))
+albdiff<-colMeans(a.chg[2:13], na.rm=TRUE)-rowMeans(ed.alb) 
+plot(albdiff, type='l', main='mismatch')
+
+if(!exists('albkern')){source("/Users/bethanyblakely/Desktop/Analysis/Albedo/RadKernel_extract.R")}
+alb.rf<-albdiff*100*albkern
+plot(alb.rf, main='rf of mismatch');lines(alb.rf)
+mean(alb.rf)
+
+#dev.copy(png, filename='Figures/Albcompare.png', width=550, height=300); dev.off()
 
 
 #rm(list=setdiff(ls(), c("databin.jules","databin.ed","datasubset.jules",
@@ -132,7 +142,7 @@ for(i in 1:nrow(st.chg)){#ncol(st.chg)
 abline(h=0)
 box(lwd=4)
 
-dev.copy(png, filename='Figures/STcompare.png', width=550, height=300); dev.off()
+#dev.copy(png, filename='Figures/STcompare.png', width=550, height=300); dev.off()
 
 #####
 ####AGU metrics####
@@ -175,7 +185,7 @@ for(i in (1:nrow(dat.transp))){
 }
 abline(h=0)
 box(lwd=3)
-dev.copy(png, filename='Figures/Transpcompare.png', width=550, height=300); dev.off()
+#dev.copy(png, filename='Figures/Transpcompare.png', width=550, height=300); dev.off()
 
 
 
