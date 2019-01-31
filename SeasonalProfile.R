@@ -1,5 +1,5 @@
 
-model<-"ed"
+model<-"jules"
   "ed"
   "jules"
 #library("abind")
@@ -30,7 +30,7 @@ par(mfrow=c(2,2), mar=c(2,2,3,1))
 
 #Cutoffs
 dominance<-0.6  #Proportion needed to count as dominance
-gap<-60  #Number of months between consecutive dominant pixels
+gap<-24 #Number of allowable months between consecutive dominant pixels
 pers<-60 #Number of months dominance must last
 canopy<-1.0 #Lowest acceptable peak season LAI
 peakgs<- 7 #Month which designates peak GS

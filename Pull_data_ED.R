@@ -5,8 +5,8 @@ georef.name<-load('PalEON_siteInfo_all.RData')
 georef<-paleon
 
 
-var.want<-c('SW_albedo','LAI','SnowDepth')
-  #c('SW_albedo','LWnet', 'lwdown', 'Qh', 'Qle','LAI','SWE','evap','tair','precipf','SoilMoist','qair','wind', 'transp','SnowDepth')
+var.want<-c('SW_albedo','LAI', 'SnowDepth')
+  #c('SW_albedo','swdown','LWnet', 'lwdown', 'Qh', 'Qle','LAI','SWE','evap','tair','precipf','SoilMoist','qair','wind', 'transp','SnowDepth')
 varchunk<-list()
 
 for (v in 1:length(var.want)){
