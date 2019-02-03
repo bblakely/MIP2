@@ -1,5 +1,8 @@
 
-model<-"jules"
+if (!exists('datasubset.ed')){source('Pull_data_ED.R')}
+if (!exists('datasubset.jules')){source('Pull_data_JULES.R')}
+
+model<-"ed"
   "ed"
   "jules"
 #library("abind")
@@ -29,7 +32,7 @@ LWnet.dc<-matrix(data=NA,nrow=12, ncol=100)
 par(mfrow=c(2,2), mar=c(2,2,3,1))
 
 #Cutoffs
-dominance<-0.6  #Proportion needed to count as dominance
+dominance<-0.55  #Proportion needed to count as dominance
 gap<-24 #Number of allowable months between consecutive dominant pixels
 pers<-60 #Number of months dominance must last
 canopy<-1.0 #Lowest acceptable peak season LAI
@@ -41,8 +44,8 @@ for(c in 1:length(DAT)){  #Number of pixels
 
 dat.ex<-data.frame(DAT[[c]][l])
 
-dc.dom<-which(dat.ex$dccomp>=0.6)
-eg.dom<-which(dat.ex$egcomp>=0.6)
+dc.dom<-which(dat.ex$dccomp>=0.55)
+eg.dom<-which(dat.ex$egcomp>=0.55)
 
 #This bit finds the last section of dominance, removing points of short fluctuations
 #Can tinker with condition on breaks (i.e. use <3 if a one-year gap is acceptable)

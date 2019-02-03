@@ -65,7 +65,7 @@ nt.agg<-aggregate(nt.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
 ann.ts<-c(900:1999)
 regimeshift<-rep(0,npix)
 
-dom<-0.6  #Sets cutoff for EG or DC dominance; prevents consistently mixed forests from getting into the list
+dom<-0.55  #Sets cutoff for EG or DC dominance; prevents consistently mixed forests from getting into the list
 ndom<-1-dom
 domlength<-10 #number of years of dominance needed
 
@@ -94,9 +94,9 @@ varset<-list()
 #Big plotting loop
 
 for (g in (1:nrow(coords))){
-  dom<-which(dc.shift.df[,g] > 0.6)  #Times of deciduous dominance
-  ndom<-which(eg.shift.df[,g]> 0.6)  #Times of EG dominance
-  #mid<-which(dc.shift.df[,g]<0.6 & dc.shift.df[,g]>0.4) #inbetween
+  dom<-which(dc.shift.df[,g] > 0.55)  #Times of deciduous dominance
+  ndom<-which(eg.shift.df[,g]> 0.55)  #Times of EG dominance
+  #mid<-which(dc.shift.df[,g]<0.55 & dc.shift.df[,g]>0.4) #inbetween
   
   endEG<-ndom[c(which(diff(ndom)>10),length(ndom))]
   begEG<-c(ndom[c(1, which(diff(ndom)>10)+1)], 9998)
