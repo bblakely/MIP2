@@ -1,5 +1,5 @@
-source('Pull_data_JULES.R')
-source('Pull_data_ED.R')
+if(!exists('databin.jules')){source('Pull_data_JULES.R')}
+if(!exists('databin.ed')){source('Pull_data_ED.R')}
 
 #run seasonal profile for jules then ed
 
@@ -56,14 +56,27 @@ abline(h=0)
 box(lwd=4)
 
 #Albedo RF
-par(mfrow=c(1,2))
-albdiff<-colMeans(a.chg[2:13], na.rm=TRUE)-rowMeans(ed.alb) 
-plot(albdiff, type='l', main='mismatch')
+par(mfrow=c(1,2), mar=c(4,5,1,0.5))
+albdiff.ed<-colMeans(a.chg[2:13], na.rm=TRUE)-rowMeans(ed.alb) 
+albdiff.jules<-colMeans(a.chg[2:13], na.rm=TRUE)-rowMeans(jules.alb) 
+#plot(albdiff.ed, type='l', main='mismatch')
+
+ylabel<-expression(bold("RF"~ (Wm^-2)))
 
 if(!exists('albkern')){source("/Users/bethanyblakely/Desktop/Analysis/Albedo/RadKernel_extract.R")}
-alb.rf<-albdiff*100*albkern
-plot(alb.rf, main='rf of mismatch');lines(alb.rf)
-mean(alb.rf)
+alb.rf.ed<-albdiff.ed*100*albkern
+plot(alb.rf.ed, ylim=c(-15,0), xlab='Month', ylab=ylabel, font=2, cex.lab=1.5,font.axis=2, cex=1.2, font.lab=2);lines(alb.rf.ed, lwd=3)
+box(lwd=3)
+mean(alb.rf.ed)
+
+alb.rf.jules<-albdiff.jules*100*albkern
+plot(alb.rf.jules, ylim=c(-15,0), xlab='Month', ylab='', font=2, cex.lab=1.5, font.axis=2, cex=1.2,font.lab=2);lines(alb.rf.jules, lwd=3)
+box(lwd=3)
+mean(alb.rf.jules)
+
+#ggplot version...
+
+
 
 #dev.copy(png, filename='Figures/Albcompare.png', width=550, height=300); dev.off()
 
