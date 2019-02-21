@@ -5,12 +5,11 @@ if (!exists('datasubset.jules')){source('Pull_data_JULES.R')}
 model<-"ed"
   "ed"
   "jules"
-#library("abind")
+#library("abind")c
 
 if(model=="ed"){DAT<-datasubset.ed}
 if(model=="jules"){DAT<-datasubset.jules}
 #var.want[14]<-"none"  #makes ed and jules same length
-
 #counters
 skipcount<-0 #For shifts that don't meet criteria
 goodcount<-0 #For shifts that do meet criteria
@@ -28,11 +27,25 @@ lwdown.dc<-matrix(data=NA,nrow=12, ncol=100)
 LWnet.eg<-matrix(data=NA,nrow=12, ncol=100)
 LWnet.dc<-matrix(data=NA,nrow=12, ncol=100)
 
+#storage for H and LE
+Qh.eg<-matrix(data=NA,nrow=12, ncol=100)
+Qh.dc<-matrix(data=NA,nrow=12, ncol=100)
+Qle.eg<-matrix(data=NA,nrow=12, ncol=100)
+Qle.dc<-matrix(data=NA,nrow=12, ncol=100)
+
+#storage for swdown and albedo
+sd.eg<-matrix(data=NA,nrow=12, ncol=100)
+sd.dc<-matrix(data=NA,nrow=12, ncol=100)
+sa.eg<-matrix(data=NA,nrow=12, ncol=100)
+sa.dc<-matrix(data=NA,nrow=12, ncol=100)
+
 #par(mfrow=c(2,3))
 par(mfrow=c(2,2), mar=c(2,2,3,1))
 
 #Cutoffs
-dominance<-0.55  #Proportion needed to count as dominance
+#if(model=='ed'){dominance<-0.6};if(model=='JULES'){dominance<-0.55}  #Proportion needed to count as dominance
+
+dc.dom.val<-0.615;eg.dom.val<-0.415
 gap<-24 #Number of allowable months between consecutive dominant pixels
 pers<-60 #Number of months dominance must last
 canopy<-1.0 #Lowest acceptable peak season LAI
@@ -44,8 +57,8 @@ for(c in 1:length(DAT)){  #Number of pixels
 
 dat.ex<-data.frame(DAT[[c]][l])
 
-dc.dom<-which(dat.ex$dccomp>=0.55)
-eg.dom<-which(dat.ex$egcomp>=0.55)
+dc.dom<-which(dat.ex$dccomp>=dc.dom.val) #.625 for mx - dc mod, 'dominance' originally'
+eg.dom<-which(dat.ex$egcomp>=eg.dom.val) # .425 for mx - dc mod
 
 #This bit finds the last section of dominance, removing points of short fluctuations
 #Can tinker with condition on breaks (i.e. use <3 if a one-year gap is acceptable)
@@ -109,9 +122,36 @@ for(p in to.plot){
   }
   }#closes if lwdown/lwnet exists statement
   
+  #special: If H and LE included, store
+  if("Qh"%in%var.want & 'Qle'%in%var.want){
+    if (p==(which(var.want=="Qh")+1)){
+      Qh.dc[,colnum]<-dc.profs[,p]
+      Qh.eg[,colnum]<-eg.profs[,p]
+    }
+    if (p==(which(var.want=="Qle")+1)){
+      Qle.dc[,colnum]<-dc.profs[,p]
+      Qle.eg[,colnum]<-eg.profs[,p]
+    
+    }
+  }#Closes if Qh/Qle exists statement
+  
+  
+  #special: If swdown, albedo included, store
+  if("swdown"%in%var.want & 'SW_albedo'%in%var.want){
+    if (p==(which(var.want=="swdown")+1)){
+      sd.dc[,colnum]<-dc.profs[,p]
+      sd.eg[,colnum]<-eg.profs[,p]
+    }
+    if (p==(which(var.want=="SW_albedo")+1)){
+      sa.dc[,colnum]<-dc.profs[,p]
+      sa.eg[,colnum]<-eg.profs[,p]
+    }
+  }#Closes if swdown/albedo exists statement
+  
+  
 }  #Closes p-loop
 goodcount<-goodcount+1
-#coords.rec[colnum,]<-coords.ed[c,]
+coords.rec[colnum,]<-coords.ed[c,]
 
 }else{skipcount<-skipcount+1}
 
@@ -136,15 +176,40 @@ for(d in 1:dim(databin)[3]){
 #Clean up LW files
 lw.dc<-abind(lwdown.dc, LWnet.dc, along=3)
 lw.dc<-lw.dc[,which(!is.na(lw.dc[1,,1])),]
+lw.dc<-lw.dc[,closed>=1,]#Clips out low-LAI cells
 lw.dc<-lw.dc[,,1]-lw.dc[,,2]
 
 lw.eg<-abind(lwdown.eg, LWnet.eg, along=3)
 lw.eg<-lw.eg[,which(!is.na(lw.eg[1,,1])),]
+lw.eg<-lw.eg[,closed>=1,]#Clips out low-LAI cells
 lw.eg<-lw.eg[,,1]-lw.eg[,,2]
 
+#Clean up H/LE files
+br.dc<-abind(Qh.dc, Qle.dc, along=3)
+br.dc<-br.dc[,which(!is.na(br.dc[1,,1])),]
+br.dc<-br.dc[,closed>=1,]#Clips out low-LAI cells
+br.dc<-br.dc[,,1]/br.dc[,,2]
 
-rm("lwdown.dc","lwdown.eg","LWnet.dc","LWnet.eg")
+br.eg<-abind(Qh.eg, Qle.eg, along=3)
+br.eg<-br.eg[,which(!is.na(br.eg[1,,1])),]
+br.eg<-br.eg[,closed>=1,]#Clips out low-LAI cells
+br.eg<-br.eg[,,1]/br.eg[,,2]
 
+
+#Clean up rad files
+swn.dc<-abind(sd.dc, sa.dc, along=3)
+swn.dc<-swn.dc[,which(!is.na(swn.dc[1,,1])),]
+swn.dc<-swn.dc[,closed>=1,]#Clips out low-LAI cells
+swn.dc<-swn.dc[,,1]*(1-swn.dc[,,2])
+
+swn.eg<-abind(sd.eg, sa.eg, along=3)
+swn.eg<-swn.eg[,which(!is.na(swn.eg[1,,1])),]
+swn.eg<-swn.eg[,closed>=1,]#Clips out low-LAI cells
+swn.eg<-swn.eg[,,1]*(1-swn.eg[,,2])
+
+
+
+rm("lwdown.dc","lwdown.eg","LWnet.dc","LWnet.eg", "Qh.dc","Qh.eg","Qle.dc","Qle.eg")
 #clean up lai and coords
 laicheck.good<-laicheck[,which(!is.na(laicheck[1,]))]
 
@@ -166,12 +231,20 @@ points.ed.used<-data.frame(coords.rec1)
 if(model=="ed"){
   databin.ed<-databin
   lw.dc.ed<-lw.dc
-  lw.eg.ed<-lw.eg}
+  lw.eg.ed<-lw.eg
+  br.dc.ed<-br.dc
+  br.eg.ed<-br.eg
+  swn.dc.ed<-swn.dc
+  swn.eg.ed<-swn.eg}
 
 if(model=="jules"){
   databin.jules<-databin
   lw.dc.jules<-lw.dc
-  lw.eg.jules<-lw.eg}
+  lw.eg.jules<-lw.eg
+  br.dc.jules<-br.dc
+  br.eg.jules<-br.eg
+  swn.dc.jules<-swn.dc
+  swn.eg.jules<-swn.eg}
 #Negative: EG lower than DC
 #Positive: EG higher than DC
 
