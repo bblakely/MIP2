@@ -62,10 +62,12 @@ eg.agg<-aggregate(eg.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
 nt.agg<-aggregate(nt.gs, by=list(YearTS.gs), FUN=mean)[,2:(npix+1)]
 
 
+dc.agg<-dc.agg/(1-nt.agg);eg.agg<-eg.agg/(1-nt.agg)
+
 ann.ts<-c(900:1999)
 regimeshift<-rep(0,npix)
 
-dom<-0.55  #Sets cutoff for EG or DC dominance; prevents consistently mixed forests from getting into the list
+dom<-0.55 #Sets cutoff for EG or DC dominance; prevents consistently mixed forests from getting into the list
 ndom<-1-dom
 domlength<-10 #number of years of dominance needed
 
@@ -107,7 +109,7 @@ for (g in (1:nrow(coords))){
   #Pulling good starts and ends
   goodstarts<-rep(0,length(begEG)-1)
   goodends<-rep(0, length(begEG)-1)
-  for (e in (1:length(begEG)-1)){
+  for (e in (1:(length(begEG)-1))){
     cand<-begEG[e]
     nextEG<-begEG[min(which(begEG>cand))]
     if(is.na(nextEG)){nextEG<-9998}
