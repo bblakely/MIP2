@@ -1,4 +1,4 @@
-source('Pull_fcomp_ED.R')
+source('Pull_fcomp_ED_v3.R')
 library(abind)
 
 georef.name<-load('PalEON_siteInfo_all.RData')
@@ -61,7 +61,7 @@ series.cells<-abind(master[,regimeshift==1,], eg.ancil, dc.ancil)
 datasubset<-list()
 for (l in 1:(ncol(series.cells))){
   shiftdat<-list()
-  sub<-varset[[l]]
+  sub<-varset[[l]] #Each of these are the starts, ends, and lengths of a shift
   if(nrow(sub)!=0){
     for (c in 1:nrow(sub)){
       shiftdat[[c]]<-series.cells[which(timeref %in% ann.ts[sub[c,1]:sub[c,2]]),l,]  #gives one more record than needed
@@ -80,7 +80,7 @@ rm('master')
 
 goodvar<-rep(0, length(varset))
 for(i in 1:length(varset)){
-  if(!is.na(datasubset[[i]])){goodvar[i]<-1}
+  if(!is.na(datasubset[[i]])){goodvar[i]<-1} #Throws errors, but they don't impair function (all it does is clip to the number of existing shift locations)
 }
 
 datasubset<-datasubset[which(goodvar==1)]
