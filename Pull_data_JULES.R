@@ -4,7 +4,7 @@ library(abind)
 georef.name<-load('PalEON_siteInfo_all.RData')
 georef<-paleon
 
-var.want<-c('SW_albedo','LAI', 'SWE')
+var.want<-c('SW_albedo','LAI', 'SWE', 'SoilMoist')
 #c('SW_albedo','LWnet', 'lwdown', 'Qh', 'Qle','LAI','SWE','evap','tair','precipf','SoilMoist','qair','wind')
 varchunk<-list()
 
@@ -15,14 +15,14 @@ for (v in 1:length(var.want)){
   name<-paste('TRIFFID/TRIFFID.',var.want[v],'.rds', sep='')
   datvar<-readRDS(name)
   
-  if(var.want[v]=="SoilMoist"){
-    datvar<-apply(datvar,c(1:2),FUN=sum, na.rm=TRUE)
-    
-  }
-  if(length(dim(datvar))==3){  #If PFT level variable, collapse to whole grid cell
+  if(length(dim(datvar))==3& var.want[v]!="SoilMoist"){  #If PFT level variable, collapse to whole grid cell
     datvar<-datvar[,,1:5]
     datvar.weight<-comp.weight*datvar
     datvar<-apply(datvar.weight,c(1:2),FUN=sum, na.rm=TRUE)
+  }
+  
+  if(var.want[v]=="SoilMoist"){
+    datvar<-datvar[,,4]
   }
 
   #goodpix<-which((datvar[1,]!=(-9999)))  

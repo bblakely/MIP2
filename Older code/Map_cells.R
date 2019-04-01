@@ -4,7 +4,8 @@ library(ggplot2)
 
 jules.pts<-data.frame(coords.jules)
 ed.pts<-data.frame(coords.ed)
-
+ed.th.pts<-data.frame(thined)
+jules.th.points<-data.frame(thinjules)
 
 #gg.tet<-ggplot()+geom_polygon(data = usa, aes(x=long, y = lat, group = group), fill='gray') + coord_fixed(1.3)
 
@@ -33,5 +34,7 @@ gg.d+geom_point(data=ed.east, aes(x=X2,y=X1), color='light green',size=4)+
   geom_point(data=ed.west, aes(x=X2,y=X1), color="white", size=4)+
   geom_point(data=lai.symb, aes(x=X2,y=X1), color=colorkey, size=2)
 
+gg.d+geom_point(data=ed.th.pts, aes(x=X2,y=X1), color='light green',size=4)+
+  geom_point(data=jules.th.points, aes(x=X2,y=X1), color='orange',size=4)
 
                    

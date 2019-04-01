@@ -2,7 +2,7 @@
 if (!exists('datasubset.ed')){source('Pull_data_ED.R')}
 if (!exists('datasubset.jules')){source('Pull_data_JULES.R')}
 
-model<-"jules"
+model<-"ed"
   "ed"
   "jules"
 #library("abind")
@@ -19,25 +19,6 @@ colnum<-0 #used with storage
 laicheck<-matrix(data=NA,nrow=3, ncol=100)  #Holds min LAI 
 coords.rec<-matrix(data=NA,nrow=100, ncol=2)
 databin<-array(data=-9999, dim=c(12,100,length(var.want)+2)) #Holds all seasonal profiles; +2 is for added-on dc/eg shift percentages
-
-
-#storage for longwave
-lwdown.eg<-matrix(data=NA,nrow=12, ncol=100)
-lwdown.dc<-matrix(data=NA,nrow=12, ncol=100)
-LWnet.eg<-matrix(data=NA,nrow=12, ncol=100)
-LWnet.dc<-matrix(data=NA,nrow=12, ncol=100)
-
-#storage for H and LE
-Qh.eg<-matrix(data=NA,nrow=12, ncol=100)
-Qh.dc<-matrix(data=NA,nrow=12, ncol=100)
-Qle.eg<-matrix(data=NA,nrow=12, ncol=100)
-Qle.dc<-matrix(data=NA,nrow=12, ncol=100)
-
-#storage for swdown and albedo
-sd.eg<-matrix(data=NA,nrow=12, ncol=100)
-sd.dc<-matrix(data=NA,nrow=12, ncol=100)
-sa.eg<-matrix(data=NA,nrow=12, ncol=100)
-sa.dc<-matrix(data=NA,nrow=12, ncol=100)
 
 #par(mfrow=c(2,3))
 par(mfrow=c(2,2), mar=c(2,2,3,1))
@@ -89,14 +70,14 @@ to.plot<-c(which(colnames(dc.profs) %in% var.want), #variable cols
 
 for(p in to.plot){ 
   
-  plot(dc.profs[,p], type='l', col='green', lwd=2, 
+  plot(dc.profs[,p], type='l', col='dark green', lwd=2, 
        ylim=c(min(min(dc.profs[,p]),min(eg.profs[,p])), max(max(dc.profs[,p]), max(eg.profs[,p]))),
        main=paste('Cell',c,'shift',l,colnames(dc.profs)[p]))
-  lines(eg.profs[,p], type='l', col='purple', lwd=2) #For both plots on one
-  #plot(eg.profs[,p], type='l', col='purple', lwd=2, #For seperate plots
-       # ylim=c(min(min(dc.profs[,p]),min(eg.profs[,p])), max(max(dc.profs[,p]), max(eg.profs[,p]))),
-       # main=paste('Cell',c,'shift',l,colnames(dc.profs)[p]))
-  diff<-eg.profs[,p]-dc.profs[,p]
+  #lines(eg.profs[,p], type='l', col='purple', lwd=2) #For both plots on one
+  plot(eg.profs[,p], type='l', col='light green', lwd=2, #For seperate plots
+        ylim=c(min(min(dc.profs[,p]),min(eg.profs[,p])), max(max(dc.profs[,p]), max(eg.profs[,p]))),
+        main=paste('Cell',c,'shift',l,colnames(dc.profs)[p]))
+  diff<-dc.profs[,p]-eg.profs[,p]
   #par(mfrow=c(1,1))
   plot(diff, type='l', main=paste('Cell',c,'shift',l,colnames(dc.profs)[p], 'diff'))
   abline(h=0)
@@ -105,9 +86,9 @@ for(p in to.plot){
   
   #special: If LAI, chack for closed canopy
   if(p==(which(var.want=="LAI")+1)){ 
-    laicheck[1,colnum]<-(dc.profs[7,p])  #6 is for june
-    laicheck[2,colnum]<-(eg.profs[7,p])
-    laicheck[3,colnum]<- mean(c(dc.profs[7,p],eg.profs[7,p]))
+    laicheck[1,colnum]<-(dc.profs[6,p])  #6 is for june
+    laicheck[2,colnum]<-(eg.profs[6,p])
+    laicheck[3,colnum]<- mean(dc.profs[6,p],eg.profs[6,p])
   }
   
   #special: If lwdown or lwnet, store
@@ -163,7 +144,6 @@ if(model=="ed"){coords.rec[colnum,]<-coords.ed[c,]}else{coords.rec[colnum,]<-coo
 
 #Thin out databin to good data
 databin<-databin[,databin[1,,1]!=(-9999),] #Clips off excess rows and cells with no data
-#databin<-databin[,coords.rec.trim[,2]>(-99),]
 closed<-apply(laicheck,FUN=min,2)[!is.na(apply(laicheck,FUN=min,2))]
 databin<-databin[,closed>=1,]#Clips out low-LAI cells
 
@@ -174,40 +154,6 @@ for(d in 1:dim(databin)[3]){
   plot(-rowMeans(databin[,,d]), type='l', main=var.want[d])
   abline(h=0)
 }
-
-#Clean up LW files
-lw.dc<-abind(lwdown.dc, LWnet.dc, along=3)
-lw.dc<-lw.dc[,which(!is.na(lw.dc[1,,1])),]
-lw.dc<-lw.dc[,closed>=1,]#Clips out low-LAI cells
-lw.dc<-lw.dc[,,1]-lw.dc[,,2]
-
-lw.eg<-abind(lwdown.eg, LWnet.eg, along=3)
-lw.eg<-lw.eg[,which(!is.na(lw.eg[1,,1])),]
-lw.eg<-lw.eg[,closed>=1,]#Clips out low-LAI cells
-lw.eg<-lw.eg[,,1]-lw.eg[,,2]
-
-#Clean up H/LE files
-br.dc<-abind(Qh.dc, Qle.dc, along=3)
-br.dc<-br.dc[,which(!is.na(br.dc[1,,1])),]
-br.dc<-br.dc[,closed>=1,]#Clips out low-LAI cells
-br.dc<-br.dc[,,1]/br.dc[,,2]
-
-br.eg<-abind(Qh.eg, Qle.eg, along=3)
-br.eg<-br.eg[,which(!is.na(br.eg[1,,1])),]
-br.eg<-br.eg[,closed>=1,]#Clips out low-LAI cells
-br.eg<-br.eg[,,1]/br.eg[,,2]
-
-
-#Clean up rad files
-swn.dc<-abind(sd.dc, sa.dc, along=3)
-swn.dc<-swn.dc[,which(!is.na(swn.dc[1,,1])),]
-swn.dc<-swn.dc[,closed>=1,]#Clips out low-LAI cells
-swn.dc<-swn.dc[,,1]*(1-swn.dc[,,2])
-
-swn.eg<-abind(sd.eg, sa.eg, along=3)
-swn.eg<-swn.eg[,which(!is.na(swn.eg[1,,1])),]
-swn.eg<-swn.eg[,closed>=1,]#Clips out low-LAI cells
-swn.eg<-swn.eg[,,1]*(1-swn.eg[,,2])
 
 
 
@@ -222,7 +168,7 @@ lai.symb.all<-data.frame(cbind(coords.rec.trim,laicheck.good[3,]))
 lai.symb<-data.frame(lai.symb.all[closed>=1,])
 #}
 
-rm("coords.rec")
+rm("laicheck","coords.rec")
 
 #if(model=='ed'){
 coords.rec1<-unique(coords.rec.trim)[(1:nrow(unique(coords.rec.trim))-1),]

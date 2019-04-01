@@ -3,9 +3,9 @@ library(abind)
 
 georef.name<-load('PalEON_siteInfo_all.RData')
 georef<-paleon
+x
 
-
-var.want<-c('SW_albedo','LAI', 'SWE')
+var.want<-c('SW_albedo','LAI', 'SWE', 'SoilMoist')
   #c('SW_albedo','swdown','LWnet', 'lwdown', 'Qh', 'Qle','LAI','SWE','evap','tair','precipf','SoilMoist','qair','wind', 'transp','SnowDepth')
 varchunk<-list()
 
@@ -13,10 +13,11 @@ for (v in 1:length(var.want)){
   name<-paste('ED2/ED2.',var.want[v],'.rds', sep='')
   datvar<-readRDS(name)
   
-  if(length(dim(datvar))==3){  #If PFT level variable, collapse to whole grid cell
+  if(length(dim(datvar))==3 & var.want[v]!="SoilMoist"){  #If PFT level variable, collapse to whole grid cell
     datvar<-apply(datvar,c(1:2),FUN=sum, na.rm=TRUE)
     beep(7)
   }
+  if(var.want[v]=="SoilMoist"){datvar<-datvar[,,12]} #For soil moisture, only want top layer since that's what would affect albedo
   
   #goodpix<-which((datvar[1,]!=(-9999)))  
   goodpix<-which(fcomp.slice[1,]!=-9999)  #This is weird - two more no data columns in fcomp than in datvar
