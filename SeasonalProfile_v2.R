@@ -2,7 +2,7 @@
 if (!exists('datasubset.ed')){source('Pull_data_ED.R')}
 if (!exists('datasubset.jules')){source('Pull_data_JULES.R')}
 
-model<-"ed"
+model<-"jules"
   "ed"
   "jules"
 #library("abind")
@@ -14,11 +14,14 @@ if(model=="jules"){DAT<-datasubset.jules}
 skipcount<-0 #For shifts that don't meet criteria
 goodcount<-0 #For shifts that do meet criteria
 colnum<-0 #used with storage
-
+counter<-0 #counts all shifts
+if(model=="ed"){goodind<-rep(1,95)}else{goodind<-rep(1,22)}
 #storage
 laicheck<-matrix(data=NA,nrow=3, ncol=100)  #Holds min LAI 
 coords.rec<-matrix(data=NA,nrow=100, ncol=2)
 databin<-array(data=-9999, dim=c(12,100,length(var.want)+2)) #Holds all seasonal profiles; +2 is for added-on dc/eg shift percentages
+eg.databin<-array(data=-9999, dim=c(12,100,length(var.want)+2)) #Holds all seasonal profiles; +2 is for added-on dc/eg shift percentages
+dc.databin<-array(data=-9999, dim=c(12,100,length(var.want)+2)) #Holds all seasonal profiles; +2 is for added-on dc/eg shift percentages
 
 #par(mfrow=c(2,3))
 par(mfrow=c(2,2), mar=c(2,2,3,1))
@@ -61,6 +64,7 @@ dc.profs<-aggregate(dat.ex[dc.fin,], by=list(dat.ex$month[dc.fin]), FUN=mean)
 eg.profs<-aggregate(dat.ex[eg.fin,], by=list(dat.ex$month[eg.fin]), FUN=mean)
 
 
+
 colnum<-colnum+1
 #var.care<-var.want[c(1:2,4:8)]
 
@@ -83,6 +87,8 @@ for(p in to.plot){
   abline(h=0)
   
   databin[,colnum,p-1]<-diff
+  eg.databin[,colnum,p-1]<-eg.profs[,p]
+  dc.databin[,colnum,p-1]<-dc.profs[,p]
   
   #special: If LAI, chack for closed canopy
   if(p==(which(var.want=="LAI")+1)){ 
@@ -91,7 +97,7 @@ for(p in to.plot){
     laicheck[3,colnum]<- mean(dc.profs[6,p],eg.profs[6,p])
   }
   
-  #special: If lwdown or lwnet, store
+  ###special: If lwdown or lwnet, store####
   if("LWnet"%in%var.want & 'lwdown'%in%var.want){
   if (p==(which(var.want=="LWnet")+1)){
     LWnet.dc[,colnum]<-dc.profs[,p]
@@ -129,13 +135,17 @@ for(p in to.plot){
       sa.eg[,colnum]<-eg.profs[,p]
     }
   }#Closes if swdown/albedo exists statement
-  
+ ##### 
   
 }  #Closes p-loop
 goodcount<-goodcount+1
+counter<-counter+1
+
+
 if(model=="ed"){coords.rec[colnum,]<-coords.ed[c,]}else{coords.rec[colnum,]<-coords.jules[c,]}
 
-}else{skipcount<-skipcount+1}
+}else{skipcount<-skipcount+1;counter<-counter+1; goodind[counter]<-0}
+
 
 } #Closes l-loop
   print(paste('cell',c,'complete'))
@@ -147,6 +157,13 @@ databin<-databin[,databin[1,,1]!=(-9999),] #Clips off excess rows and cells with
 closed<-apply(laicheck,FUN=min,2)[!is.na(apply(laicheck,FUN=min,2))]
 databin<-databin[,closed>=1,]#Clips out low-LAI cells
 
+eg.databin<-eg.databin[,eg.databin[1,,1]!=(-9999),] 
+eg.databin<-eg.databin[,closed>=1,]#Clips out low-LAI cells
+
+dc.databin<-dc.databin[,dc.databin[1,,1]!=(-9999),] 
+dc.databin<-dc.databin[,closed>=1,]#Clips out low-LAI cells
+
+goodind[which(goodind==1)[closed<1]]<-0 #dangerous line; will continue to erode 1's unless goodind is reset
 
 #Plot diffs
 par(mfrow=c(1,2))

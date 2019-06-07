@@ -17,10 +17,10 @@ toy2<-toy[order(toy[,1]),];colgrad<-LAIramp(nrow(toy2))
 toy3<-cbind.data.frame(toy2, colgrad);toy4<-toy3[order(toy3[,3]),]
 colscheme.ed<-as.character(toy4$colgrad)
 
-p1.ed<-ggplot(gdat, aes(x=wlai,y=walb))+geom_point(size=4, col=colscheme.ed)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+ylab(albexp)+xlab(laiexp)+ggtitle("Winter")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
+p1.ed<-ggplot(gdat, aes(x=wlai,y=walb))+geom_point(size=4, col=colscheme.ed)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(laiexp)+ggtitle("Winter")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
 #p1.ed
 
-p2.ed<-ggplot(gdat, aes(x=slai,y=salb, color=slai))+geom_point(size=4, col=colscheme.ed)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+ylab(albexp)+xlab(laiexp)+ggtitle("Summer")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
+p2.ed<-ggplot(gdat, aes(x=slai,y=salb, color=slai))+geom_point(size=4, col=colscheme.ed)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(laiexp)+ggtitle("Summer")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
 #p2.ed
 
 grid.arrange(p1.ed,p2.ed,nrow=2, ncol=1)
@@ -58,7 +58,7 @@ toy2<-toy[order(toy[,1]),];colgrad<-Snowramp(nrow(toy2))
 toy3<-cbind.data.frame(toy2, colgrad);toy4<-toy3[order(toy3[,3]),]
 colscheme.ed.s<-as.character(toy4$colgrad)
 
-p2s.ed<-ggplot(gdat.ws, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.ed.s)+xlim(-30,15)+ylim(-0.07,0.075)+ theme_bw()+ylab(albexp)+xlab(snoexp)+ggtitle("Snow")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
+p2s.ed<-ggplot(gdat.ws, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.ed.s)+xlim(-30,15)+ylim(-0.07,0.075)+ theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(snoexp)+ggtitle("Snow")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
 p2s.ed
 dev.copy(png, "Figures/ED_Snow.png", width=370, height=500);dev.off()
 
@@ -86,10 +86,10 @@ toy2<-toy[order(toy[,1]),];colgrad<-LAIramp(nrow(toy2))
 toy3<-cbind.data.frame(toy2, colgrad);toy4<-toy3[order(toy3[,3]),]
 colscheme.jules<-as.character(toy4$colgrad)
 
-p1.jules<-ggplot(gdat, aes(x=wlai,y=walb))+geom_point(size=4, col=colscheme.jules)+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+ylab(albexp)+xlab(laiexp)+ggtitle("Winter")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
+p1.jules<-ggplot(gdat, aes(x=wlai,y=walb))+geom_point(size=4, col=colscheme.jules)+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(laiexp)+ggtitle("Winter")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
 #p1.jules
 
-p2.jules<-ggplot(gdat, aes(x=slai,y=salb))+geom_point(size=4, col=colscheme.jules)+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+ylab(albexp)+xlab(laiexp)+ggtitle("Summer")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
+p2.jules<-ggplot(gdat, aes(x=slai,y=salb))+geom_point(size=4, col=colscheme.jules)+xlim(-2.5,2.8)+ylim(-0.06,0.075)+theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(laiexp)+ggtitle("Summer")+geom_hline(yintercept=0, linetype="dashed", size=0.2)+scale_color_gradientn(colours = rainbow(nrow(gdat)))
 #p2.jules
 
 grid.arrange(p1.jules,p2.jules,nrow=2, ncol=1)
@@ -97,7 +97,7 @@ dev.copy(png, "Figures/JULES_LAI.png", width=370, height=500);dev.off()
 
 #colvec=c("red","orange","yellow","green","blue")
 plot(rowMeans(jules.alb), type='l', ylim=c(-0.07, 0.07), main='JULES', lwd=2, 
-     ylab="", xlab="Month", cex.axis=1.5, cex.lab=2.5, font.axis=2, font.lab=2, cex.main=2)
+     ylab=ylab.exp, xlab="Month", cex.axis=1.5, cex.lab=2.5, font.axis=2, font.lab=2, cex.main=2)
 
 
 for(i in 1:ncol(jules.alb)){
@@ -118,13 +118,13 @@ toy2<-toy[order(toy[,1]),];colgrad<-Snowramp(nrow(toy2))
 toy3<-cbind.data.frame(toy2, colgrad);toy4<-toy3[order(toy3[,3]),]
 colscheme.jules.s<-as.character(toy4$colgrad)
 
-p2s.jules<-ggplot(gdat.ws, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.jules.s)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-30,15)+ylim(-0.07,0.075)+ theme_bw()+ylab(albexp)+xlab(snoexp)+ggtitle("Snow")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
+p2s.jules<-ggplot(gdat.ws, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.jules.s)+stat_smooth(method="lm", col='dark gray', fill='gray')+xlim(-30,15)+ylim(-0.07,0.075)+ theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(snoexp)+ggtitle("Snow")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
 p2s.jules
 dev.copy(png, "Figures/JULES_Snow.png", width=370, height=500);dev.off()
 
 
 plot(rowMeans(jules.alb), type='l', ylim=c(-0.07, 0.07), main='JULES', lwd=2, 
-     ylab="", xlab="Month", cex.axis=1.5, cex.lab=2.5, font.axis=2, font.lab=2, cex.main=2)
+     ylab=ylab.exp,, xlab="Month", cex.axis=1.5, cex.lab=2.5, font.axis=2, font.lab=2, cex.main=2)
 for(i in 1:ncol(jules.alb)){
   #if(i !=4){
   lines(jules.alb[,i], lwd=2, col=colscheme.jules.s[i])
@@ -144,7 +144,7 @@ toy2<-toy[order(toy[,1]),];colgrad<-rev(cm.colors(nrow(toy2)))
 toy3<-cbind.data.frame(toy2, colgrad);toy4<-toy3[order(toy3[,3]),]
 colscheme.jules.sm<-as.character(toy4$colgrad)
 
-p2sm.jules<-ggplot(gdat.sm, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.jules.sm)+ylim(-0.07,0.075)+theme_bw()+ylab(albexp)+xlab(snoexp)+ggtitle("JULES")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
+p2sm.jules<-ggplot(gdat.sm, aes(x=wsno,y=walb))+geom_point(size=4, col=colscheme.jules.sm)+ylim(-0.07,0.075)+theme_bw()+theme(axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), axis.title=element_text(size=30))+ylab(albexp)+xlab(snoexp)+ggtitle("JULES")+geom_hline(yintercept=0, linetype="dashed", size=0.2)
 p2sm.jules
 
 ####magnitude of change

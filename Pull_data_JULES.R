@@ -4,7 +4,7 @@ library(abind)
 georef.name<-load('PalEON_siteInfo_all.RData')
 georef<-paleon
 
-var.want<-c('SW_albedo','LAI', 'SWE', 'SoilMoist')
+var.want<-c('SW_albedo','LAI', 'SWE', 'SoilMoist', 'precipf', 'tair')
 #c('SW_albedo','LWnet', 'lwdown', 'Qh', 'Qle','LAI','SWE','evap','tair','precipf','SoilMoist','qair','wind')
 varchunk<-list()
 

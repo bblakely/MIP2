@@ -2,7 +2,7 @@
 if (!exists('datasubset.ed')){source('Pull_data_ED.R')}
 if (!exists('datasubset.jules')){source('Pull_data_JULES.R')}
 
-model<-"jules"
+model<-"ed"
   "ed"
   "jules"
 #library("abind")
